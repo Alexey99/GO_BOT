@@ -1,12 +1,14 @@
 package main
+
 import (
-  "github.com/Syfaro/telegram-bot-api"
-  "log"
+	"log"
+
+	"github.com/Syfaro/telegram-bot-api"
 )
 
 func main() {
-  // подключаемся к боту с помощью токена
-  bot, err := tgbotapi.NewBotAPI("ТОКЕН")
+	// РїРѕРґРєР»СЋС‡Р°РµРјСЃСЏ Рє Р±РѕС‚Сѓ СЃ РїРѕРјРѕС‰СЊСЋ С‚РѕРєРµРЅР°
+	bot, err := tgbotapi.NewBotAPI("441163061:AAGE7czgn1XHFvU8YN-PbyduhWlMbE9AGxQ")
 	if err != nil {
 		log.Panic(err)
 	}
@@ -14,34 +16,39 @@ func main() {
 	bot.Debug = true
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	// инициализируем канал, куда будут прилетать обновления от API
+	// РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РєР°РЅР°Р», РєСѓРґР° Р±СѓРґСѓС‚ РїСЂРёР»РµС‚Р°С‚СЊ РѕР±РЅРѕРІР»РµРЅРёСЏ РѕС‚ API
 	var ucfg tgbotapi.UpdateConfig = tgbotapi.NewUpdate(0)
 	ucfg.Timeout = 60
-	err = bot.UpdatesChan(ucfg)
-	// читаем обновления из канала
+	ch, err := bot.GetUpdatesChan(ucfg) //UpdatesChan(ucfg)
+	// С‡РёС‚Р°РµРј РѕР±РЅРѕРІР»РµРЅРёСЏ РёР· РєР°РЅР°Р»Р°
 	for {
 		select {
-		case update := <-bot.Updates:
-			// Пользователь, который написал боту
+		case update := <-ch:
+			// РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ, РєРѕС‚РѕСЂС‹Р№ РЅР°РїРёСЃР°Р» Р±РѕС‚Сѓ
 			UserName := update.Message.From.UserName
 
-			// ID чата/диалога.
-			// Может быть идентификатором как чата с пользователем
-			// (тогда он равен UserID) так и публичного чата/канала
+			// ID С‡Р°С‚Р°/РґРёР°Р»РѕРіР°.
+			// РњРѕР¶РµС‚ Р±С‹С‚СЊ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂРѕРј РєР°Рє С‡Р°С‚Р° СЃ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
+			// (С‚РѕРіРґР° РѕРЅ СЂР°РІРµРЅ UserID) С‚Р°Рє Рё РїСѓР±Р»РёС‡РЅРѕРіРѕ С‡Р°С‚Р°/РєР°РЅР°Р»Р°
 			ChatID := update.Message.Chat.ID
 
-			// Текст сообщения
-			Text := update.Message.Text
+			// РўРµРєСЃС‚ СЃРѕРѕР±С‰РµРЅРёСЏ
+			Text := update.Message.Text + "  123"
 
 			log.Printf("[%s] %d %s", UserName, ChatID, Text)
 
-			// Ответим пользователю его же сообщением
+			// РћС‚РІРµС‚РёРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ РµРіРѕ Р¶Рµ СЃРѕРѕР±С‰РµРЅРёРµРј
 			reply := Text
-			// Созадаем сообщение
+			// РЎРѕР·РґР°РµРј СЃРѕРѕР±С‰РµРЅРёРµ
 			msg := tgbotapi.NewMessage(ChatID, reply)
-			// и отправляем его
-			bot.SendMessage(msg)
+			// Рё РѕС‚РїСЂР°РІР»СЏРµРј РµРіРѕ
+			mm := SendMsg(msg)
+			bot.Send(mm) //bot.SendMessage(msg)
 		}
 
 	}
+}
+
+func SendMsg(msg tgbotapi.MessageConfig) tgbotapi.Chattable {
+	return msg
 }
