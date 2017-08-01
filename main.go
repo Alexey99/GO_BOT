@@ -33,7 +33,11 @@ func main() {
 			ChatID := update.Message.Chat.ID
 
 			// Текст сообщения
+<<<<<<< HEAD
 			Text := update.Message.Text + "123"
+=======
+			Text := update.Message.Text + "  123"
+>>>>>>> be0ed4bb57d0096856552db69f6a0e80b959cfd6
 
 			log.Printf("[%s] %d %s", UserName, ChatID, Text)
 
